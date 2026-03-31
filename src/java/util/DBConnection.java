@@ -21,7 +21,7 @@ public class DBConnection {
             String user = System.getenv("DB_USER");
             String pass = System.getenv("DB_PASS");
 
-            String url = "jdbc:mysql://" + host + ":" + port + "/" + db;
+            String url = "jdbc:mysql://" + host + ":" + port + "/" + db + "?useSSL=true&allowPublicKeyRetrieval=true";
             con = DriverManager.getConnection(url, user, pass);
 
         } else {
