@@ -3,7 +3,8 @@ FROM tomcat:9.0
 # Remove default ROOT webapp to avoid conflicts
 RUN rm -rf /usr/local/tomcat/webapps/ROOT
 
-COPY dist/pms.war /usr/local/tomcat/webapps/ROOT.war
+# Copy web application files directly (JSPs are pre-compiled on first request)
+COPY web/ /usr/local/tomcat/webapps/ROOT/
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
