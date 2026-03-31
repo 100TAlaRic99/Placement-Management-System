@@ -138,7 +138,7 @@ if(studentId != null){
         String port = System.getenv("DB_PORT");
         String db   = System.getenv("DB_NAME");
         String user = System.getenv("DB_USER");
-        String pass = System.getenv("DB_PASSWORD");
+        String pass = System.getenv("DB_PASS");
 
         String url;
 
