@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: placement-management-system
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    # Render free-tier spins down after inactivity; use standard plan to keep it always on
+    plan: free
+    healthCheckPath: /pms/index.jsp
+    envVars:
+      # Set these in the Render dashboard → Environment tab
+      # Connect to an external MySQL host (e.g. PlanetScale, Aiven, Railway MySQL)
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_NAME
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASS
+        sync: false

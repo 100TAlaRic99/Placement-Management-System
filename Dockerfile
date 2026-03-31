@@ -1,3 +1,13 @@
 FROM tomcat:9.0
-COPY dist/pms.war /usr/local/tomcat/webapps/
+
+# Remove default ROOT webapp to avoid conflicts
+RUN rm -rf /usr/local/tomcat/webapps/ROOT
+
+COPY dist/pms.war /usr/local/tomcat/webapps/pms.war
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
+# Render injects $PORT at runtime; default is 8080 for local use
 EXPOSE 8080
+
+CMD ["/docker-entrypoint.sh"]
