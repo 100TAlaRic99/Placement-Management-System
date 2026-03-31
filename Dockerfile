@@ -17,4 +17,4 @@ RUN chmod +x /docker-entrypoint.sh
 # Render injects $PORT at runtime; default is 8080 for local use
 EXPOSE 8080
 
-CMD ["/docker-entrypoint.sh"]
+ENTRYPOINT ["/docker-entrypoint.sh"]
