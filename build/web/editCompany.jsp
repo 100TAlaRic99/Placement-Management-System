@@ -50,11 +50,11 @@ try {
     <input type="hidden" name="cid" value="<%=rs.getInt("cid")%>">
 
     Company Name:
-    <input type="text" name="companyName"
+    <input type="text" name="cname"
            value="<%=rs.getString("cname")%>"><br><br>
 
     Role:
-    <input type="text" name="jobRole"
+    <input type="text" name="role"
            value="<%=rs.getString("role")%>"><br><br>
 
     Package:

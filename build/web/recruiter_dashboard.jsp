@@ -87,6 +87,7 @@ body { background: #f4f6f9; }
 </tr>
 
 <%
+if(con != null) {
 Statement st = con.createStatement();
 ResultSet rs = st.executeQuery("SELECT * FROM students WHERE status='applied'");
 
@@ -111,6 +112,14 @@ class="btn btn-danger btn-sm">Reject</button>
 </td>
 </tr>
 
+<%
+}
+rs.close();
+st.close();
+con.close();
+} else {
+%>
+<tr><td colspan="8">Database connection error. Please try again.</td></tr>
 <%
 }
 %>

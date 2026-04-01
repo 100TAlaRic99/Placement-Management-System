@@ -121,6 +121,12 @@ button:hover{
     // Session check
 String studentId = (String) session.getAttribute("student_id");
 
+// If not logged in, redirect to login
+if(studentId == null || studentId.trim().isEmpty()){
+    response.sendRedirect("studentlogin.jsp");
+    return;
+}
+
 // Initialize variables
 String fname="", mname="", lname="", email="", gender="", address="";
 String marks10="", marks12="", diploma="", graduation="", branch="", dob="", phone="", skills="";

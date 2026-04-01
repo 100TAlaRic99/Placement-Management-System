@@ -10,7 +10,8 @@
 
 <%
     // --------- Fetch student name from myprofile_db ---------
-    String username = (String) session.getAttribute("username");
+    String username = (String) session.getAttribute("studentUser");
+    String studentId = (String) session.getAttribute("student_id");
     String firstName = "Student"; // default
     try {
         Class.forName("com.mysql.cj.jdbc.Driver");
@@ -18,7 +19,7 @@
 // ======== Profile DB ========
 String host = System.getenv("DB_HOST");
 String port = System.getenv("DB_PORT");
-String db   = System.getenv("DB_NAME_PROFILE");  // env variable for profile DB
+String db   = System.getenv("DB_NAME");
 String user = System.getenv("DB_USER");
 String pass = System.getenv("DB_PASS");
 
@@ -26,34 +27,27 @@ String urlProfile;
 if(host==null){  // local fallback
     urlProfile = "jdbc:mysql://localhost:3306/myprofile_db";
     user = "root";
-    pass = "";
+    pass = "spdt";
 } else {
     urlProfile = "jdbc:mysql://" + host + ":" + port + "/" + db + "?useSSL=false&allowPublicKeyRetrieval=true";
 }
 
 Connection conProfile = DriverManager.getConnection(urlProfile, user, pass);
 
-// ======== Company DB ========
-host = System.getenv("DB_HOST");
-port = System.getenv("DB_PORT");
-db   = System.getenv("DB_NAME_COMPANY");  // env variable for company DB
-
-String urlCompany;
-if(host==null){
-    urlCompany = "jdbc:mysql://localhost:3306/company_db";
-    user = "root";
-    pass = "spdt";
-} else {
-    urlCompany = "jdbc:mysql://" + host + ":" + port + "/" + db + "?useSSL=false&allowPublicKeyRetrieval=true";
-}
-
-Connection conCompany = DriverManager.getConnection(urlCompany, user, pass);
-        PreparedStatement ps = conProfile.prepareStatement(
-                "SELECT first_name FROM students WHERE username=?");
-        ps.setString(1, username);
-        ResultSet rs = ps.executeQuery();
-        if(rs.next()) {
-            firstName = rs.getString("first_name");
+        // Try to get name from student_profile table using student_id
+        if(studentId != null) {
+            PreparedStatement ps = conProfile.prepareStatement(
+                "SELECT fname FROM student_profile WHERE id=?");
+            ps.setString(1, studentId);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()) {
+                String fname = rs.getString("fname");
+                if(fname != null && !fname.isEmpty()) {
+                    firstName = fname;
+                }
+            }
+            rs.close();
+            ps.close();
         }
         conProfile.close();
     } catch(Exception e) { e.printStackTrace(); }
@@ -61,8 +55,23 @@ Connection conCompany = DriverManager.getConnection(urlCompany, user, pass);
     // --------- Fetch recent companies from company_db ---------
     List<Map<String,String>> companies = new ArrayList<>();
     try {
-        Connection conCompany = DriverManager.getConnection(
+        Class.forName("com.mysql.cj.jdbc.Driver");
+
+        String host = System.getenv("DB_HOST");
+        Connection conCompany;
+
+        if(host != null) {
+            String port = System.getenv("DB_PORT");
+            String db = System.getenv("DB_NAME");
+            String dbUser = System.getenv("DB_USER");
+            String dbPass = System.getenv("DB_PASS");
+            String urlCompany = "jdbc:mysql://" + host + ":" + port + "/" + db + "?useSSL=false&allowPublicKeyRetrieval=true";
+            conCompany = DriverManager.getConnection(urlCompany, dbUser, dbPass);
+        } else {
+            conCompany = DriverManager.getConnection(
                 "jdbc:mysql://localhost:3306/company_db","root","spdt");
+        }
+
         Statement st = conCompany.createStatement();
         ResultSet rs = st.executeQuery(
     "SELECT id, name, criteria, role FROM companies ORDER BY id ASC LIMIT 5");

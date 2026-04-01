@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 
@@ -79,18 +80,32 @@ public class StudentActionServlet extends HttpServlet {
   String id = request.getParameter("id");
 String action = request.getParameter("action");
 
-if(action.equals("reject")) {
+if(action != null && action.equals("reject")) {
 
     try {
-        Connection con = ShortConnection.getConnection();
-        PreparedStatement ps = con.prepareStatement("DELETE FROM users WHERE id=?");
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        String host = System.getenv("DB_HOST");
+        Connection con;
+        if (host != null) {
+            String port = System.getenv("DB_PORT");
+            String db = System.getenv("DB_NAME");
+            String user = System.getenv("DB_USER");
+            String pass = System.getenv("DB_PASS");
+            String url = "jdbc:mysql://" + host + ":" + port + "/" + db + "?useSSL=false&allowPublicKeyRetrieval=true";
+            con = DriverManager.getConnection(url, user, pass);
+        } else {
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/recuriterdashboard_db", "root", "spdt");
+        }
+        PreparedStatement ps = con.prepareStatement("DELETE FROM students WHERE id=?");
         ps.setString(1, id);
         ps.executeUpdate();
+        ps.close();
+        con.close();
     } catch(Exception e) {
         e.printStackTrace();
     }
 
-    response.sendRedirect("shortlisted_students.jsp");
+    response.sendRedirect("recruiter_dashboard.jsp");
 
 } else if(action.equals("view")) {
 

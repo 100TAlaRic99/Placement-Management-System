@@ -4,33 +4,56 @@
     Author     : defaultuser0
 --%>
 
-<%@page import="configConnection.DBConnection"%>
+<%@page import="java.sql.*"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ page import="java.sql.*" %>
 <%
-    String company = request.getParameter("company");
-String role = request.getParameter("role");
+    // Get parameters matching what newCompanies.jsp sends
+    String company = request.getParameter("company_name");
+    String role = request.getParameter("role");
 
-String email = "student@gmail.com"; // session se aayega baad me
+    // Get email from session instead of hardcoding
+    String email = (String) session.getAttribute("studentUser");
+    if (email == null) email = "student@gmail.com"; // fallback
+
+    String message = "Application Submitted";
+    boolean success = true;
 
 try{
     Class.forName("com.mysql.cj.jdbc.Driver");
 
-    // ✅ New line
-    Connection con = DBConnection.getConnection();
+    // Dynamic DB connection
+    String host = System.getenv("DB_HOST");
+    Connection con;
+
+    if (host != null) {
+        String port = System.getenv("DB_PORT");
+        String db = System.getenv("DB_NAME");
+        String user = System.getenv("DB_USER");
+        String pass = System.getenv("DB_PASS");
+        String url = "jdbc:mysql://" + host + ":" + port + "/" + db + "?useSSL=false&allowPublicKeyRetrieval=true";
+        con = DriverManager.getConnection(url, user, pass);
+    } else {
+        String url = "jdbc:mysql://localhost:3306/applied_db";
+        String user = "root";
+        String pass = "spdt";
+        con = DriverManager.getConnection(url, user, pass);
+    }
 
     PreparedStatement ps = con.prepareStatement(
-        "INSERT INTO applied_jobs (company, role, email) VALUES (?, ?, ?)"
+        "INSERT INTO applied_companies (student_email, company_name, role, apply_date) VALUES (?, ?, ?, CURDATE())"
     );
-    ps.setString(1, company);
-    ps.setString(2, role);
-    ps.setString(3, email);
+    ps.setString(1, email);
+    ps.setString(2, company);
+    ps.setString(3, role);
 
     ps.executeUpdate();
+    ps.close();
     con.close();
 
 } catch(Exception e){
     e.printStackTrace();
+    success = false;
+    message = "Error: " + e.getMessage();
 }
 %>
 
@@ -67,8 +90,13 @@ try{
 <body>
 
 <div class="box">
+    <% if (success) { %>
     <h2>Application Submitted ✅</h2>
-    <p>You have successfully applied for this company.</p>
+    <p>You have successfully applied for <strong><%= company %></strong>.</p>
+    <% } else { %>
+    <h2>Application Failed ❌</h2>
+    <p><%= message %></p>
+    <% } %>
     <a href="newCompanies.jsp">Back to Companies</a>
 </div>
 

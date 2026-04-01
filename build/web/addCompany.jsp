@@ -76,23 +76,17 @@
     <div class="card">
         <form action="AddCompanyServlet" method="post">
 
-            <label>Company ID</label>
-            <input type="text" name="companyId" placeholder="Company ID" required>
-
             <label>Company Name</label>
             <input type="text" name="companyName" placeholder="Company Name" required>
-
-            <label>Company Password</label>
-            <input type="password" name="companyPassword" placeholder="Company Password" required>
-
-            <label>Criteria</label>
-            <input type="text" name="criteria" placeholder="Company Criteria" required>
 
             <label>Job Role</label>
             <input type="text" name="jobRole" placeholder="Job Role" required>
 
-            <label>Date</label>
-            <input type="date" name="date" required>
+            <label>Package</label>
+            <input type="text" name="package" placeholder="e.g. 3.5 LPA" required>
+
+            <label>Criteria</label>
+            <input type="text" name="criteria" placeholder="Company Criteria" required>
 
             <input type="submit" value="Save" class="btn">
 

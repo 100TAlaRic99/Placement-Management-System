@@ -144,6 +144,7 @@ th{
                     <form action="apply.jsp" method="post">
                         <input type="hidden" name="company_id" value="30001">
                         <input type="hidden" name="company_name" value="Wipro">
+                        <input type="hidden" name="role" value="Testing">
                         <button class="apply-btn">APPLY</button>
                     </form>
                 </td>
@@ -159,6 +160,7 @@ th{
                     <form action="apply.jsp" method="post">
                         <input type="hidden" name="company_id" value="30002">
                         <input type="hidden" name="company_name" value="TCS">
+                        <input type="hidden" name="role" value="Analyst">
                         <button class="apply-btn">APPLY</button>
                     </form>
                 </td>
@@ -174,6 +176,7 @@ th{
                     <form action="apply.jsp" method="post">
                         <input type="hidden" name="company_id" value="30003">
                         <input type="hidden" name="company_name" value="Capgemini">
+                        <input type="hidden" name="role" value="Engineer Trainee">
                         <button class="apply-btn">APPLY</button>
                     </form>
                 </td>
@@ -189,6 +192,7 @@ th{
                     <form action="apply.jsp" method="post">
                         <input type="hidden" name="company_id" value="30004">
                         <input type="hidden" name="company_name" value="Knowledge Lens">
+                        <input type="hidden" name="role" value="Java Developer">
                         <button class="apply-btn">APPLY</button>
                     </form>
                 </td>
@@ -204,6 +208,7 @@ th{
                     <form action="apply.jsp" method="post">
                         <input type="hidden" name="company_id" value="30005">
                         <input type="hidden" name="company_name" value="Persistent Pune">
+                        <input type="hidden" name="role" value="Java Developer">
                         <button class="apply-btn">APPLY</button>
                     </form>
                 </td>

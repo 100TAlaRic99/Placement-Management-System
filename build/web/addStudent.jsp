@@ -77,7 +77,7 @@
         <form action="AddStudentServlet" method="post">
 
             <label>PRN Number</label>
-            <input type="text" name="prn" placeholder="Students PRN number" required>
+            <input type="number" name="prn" placeholder="Students PRN number" required>
 
             <label>First Name</label>
             <input type="text" name="fname" placeholder="Students first name" required>

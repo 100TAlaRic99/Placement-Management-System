@@ -77,6 +77,13 @@ public class SaveProfileServlet extends HttpServlet {
      //   processRequest(request, response);
     
         String studentId = request.getParameter("id");
+
+        // Session validation: if studentId is null or "null", redirect to login
+        if (studentId == null || studentId.trim().isEmpty() || studentId.equals("null")) {
+            response.sendRedirect("studentlogin.jsp");
+            return;
+        }
+
         String fname   = request.getParameter("fname");
         String mname   = request.getParameter("mname");
         String lname   = request.getParameter("lname");
@@ -108,24 +115,23 @@ public class SaveProfileServlet extends HttpServlet {
             resumePath = "uploads/" + fileName;
         }
 
+        Connection con = null;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             String host = System.getenv("DB_HOST");
 
-Connection con;
-
 if (host != null) {
-    // 🌐 Railway (Online DB)
+    // Railway (Online DB)
     String port = System.getenv("DB_PORT");
     String db = System.getenv("DB_NAME");
     String user = System.getenv("DB_USER");
     String pass = System.getenv("DB_PASS");
 
-    String url = "jdbc:mysql://" + host + ":" + port + "/" + db;
+    String url = "jdbc:mysql://" + host + ":" + port + "/" + db + "?useSSL=false&allowPublicKeyRetrieval=true";
     con = DriverManager.getConnection(url, user, pass);
 
 } else {
-    // 💻 Localhost
+    // Localhost
     String url = "jdbc:mysql://localhost:3306/myprofile_db";
     String user = "root";
     String pass = "spdt";
@@ -133,7 +139,7 @@ if (host != null) {
     con = DriverManager.getConnection(url, user, pass);
 }
             PreparedStatement check = con.prepareStatement("SELECT * FROM student_profile WHERE id=?");
-            check.setString(1, studentId);
+            check.setInt(1, Integer.parseInt(studentId));
             ResultSet rs = check.executeQuery();
 
             if (rs.next()) {
@@ -157,18 +163,18 @@ if (host != null) {
                 ps.setString(13, phone);
                 ps.setString(14, skills);
                 ps.setString(15, resumePath != null ? resumePath : rs.getString("resume_path"));
-                ps.setString(16, studentId);
+                ps.setInt(16, Integer.parseInt(studentId));
 
                 ps.executeUpdate();
                 ps.close();
 
             } else {
-                // INSERT
+                // INSERT with explicit column names
                 PreparedStatement ps = con.prepareStatement(
-                    "INSERT INTO student_profile VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+                    "INSERT INTO student_profile (id, fname, mname, lname, email, gender, address, marks10, marks12, diploma, graduation, branch, dob, phone, skills, resume_path) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
                 );
 
-                ps.setString(1, studentId);
+                ps.setInt(1, Integer.parseInt(studentId));
                 ps.setString(2, fname);
                 ps.setString(3, mname);
                 ps.setString(4, lname);
@@ -198,6 +204,8 @@ if (host != null) {
         } catch (Exception e) {
             e.printStackTrace();
             response.getWriter().println("Error: " + e);
+        } finally {
+            try { if (con != null) con.close(); } catch (Exception e) {}
         }
     }
 
