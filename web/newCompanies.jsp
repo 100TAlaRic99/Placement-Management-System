@@ -5,6 +5,55 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="java.sql.*"%>
+<%
+    // ---- Profile completeness check ----
+    String studentId = (String) session.getAttribute("student_id");
+    boolean profileComplete = false;
+
+    if (studentId != null) {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            String host = System.getenv("DB_HOST");
+            Connection _con;
+            if (host != null) {
+                String _port = System.getenv("DB_PORT");
+                String _db   = System.getenv("DB_NAME");
+                String _user = System.getenv("DB_USER");
+                String _pass = System.getenv("DB_PASS");
+                _con = DriverManager.getConnection(
+                    "jdbc:mysql://" + host + ":" + _port + "/" + _db + "?useSSL=false&allowPublicKeyRetrieval=true",
+                    _user, _pass);
+            } else {
+                _con = DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3306/myprofile_db", "root", "spdt");
+            }
+            PreparedStatement _ps = _con.prepareStatement(
+                "SELECT fname, lname, email, gender, address, marks10, marks12, graduation, branch, dob, phone FROM student_profile WHERE id=?");
+            _ps.setInt(1, Integer.parseInt(studentId));
+            ResultSet _rs = _ps.executeQuery();
+            if (_rs.next()) {
+                // All required fields must be non-null and non-empty
+                String[] required = {
+                    _rs.getString("fname"), _rs.getString("lname"),
+                    _rs.getString("email"), _rs.getString("gender"),
+                    _rs.getString("address"), _rs.getString("marks10"),
+                    _rs.getString("marks12"), _rs.getString("graduation"),
+                    _rs.getString("branch"), _rs.getString("dob"),
+                    _rs.getString("phone")
+                };
+                profileComplete = true;
+                for (String f : required) {
+                    if (f == null || f.trim().isEmpty()) {
+                        profileComplete = false;
+                        break;
+                    }
+                }
+            }
+            _rs.close(); _ps.close(); _con.close();
+        } catch (Exception _e) { _e.printStackTrace(); }
+    }
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -93,6 +142,23 @@ th{
     background:#4b6cb7;
     color:white;
 }
+.apply-btn-disabled{
+    padding:6px 15px;
+    border:1px solid #ccc;
+    background:#f0f0f0;
+    color:#999;
+    cursor:not-allowed;
+    border-radius:3px;
+}
+.profile-warning{
+    background:#fff3cd;
+    border:1px solid #ffc107;
+    color:#856404;
+    padding:12px 18px;
+    border-radius:4px;
+    margin-bottom:18px;
+    font-size:14px;
+}
 
 .footer{
     text-align:center;
@@ -124,6 +190,14 @@ th{
     <div class="card">
         <h2>COMPANIES</h2>
 
+        <% if (!profileComplete) { %>
+        <div class="profile-warning">
+            ⚠️ <strong>Profile Incomplete:</strong> Please complete all required fields in
+            <a href="myprofile.jsp" style="color:#856404; font-weight:bold;">My Profile</a>
+            before applying to any company. (Resume upload is optional.)
+        </div>
+        <% } %>
+
         <table>
             <tr>
                 <th>ID</th>
@@ -141,12 +215,16 @@ th{
                 <td>Testing</td>
                 <td>13/02/2021</td>
                 <td>
+                    <% if (profileComplete) { %>
                     <form action="apply.jsp" method="post">
                         <input type="hidden" name="company_id" value="30001">
                         <input type="hidden" name="company_name" value="Wipro">
                         <input type="hidden" name="role" value="Testing">
                         <button class="apply-btn">APPLY</button>
                     </form>
+                    <% } else { %>
+                    <button class="apply-btn-disabled" disabled title="Complete your profile first">APPLY</button>
+                    <% } %>
                 </td>
             </tr>
 
@@ -157,12 +235,16 @@ th{
                 <td>Analyst</td>
                 <td>21/02/2021</td>
                 <td>
+                    <% if (profileComplete) { %>
                     <form action="apply.jsp" method="post">
                         <input type="hidden" name="company_id" value="30002">
                         <input type="hidden" name="company_name" value="TCS">
                         <input type="hidden" name="role" value="Analyst">
                         <button class="apply-btn">APPLY</button>
                     </form>
+                    <% } else { %>
+                    <button class="apply-btn-disabled" disabled title="Complete your profile first">APPLY</button>
+                    <% } %>
                 </td>
             </tr>
 
@@ -173,12 +255,16 @@ th{
                 <td>Engineer Trainee</td>
                 <td>18/02/2021</td>
                 <td>
+                    <% if (profileComplete) { %>
                     <form action="apply.jsp" method="post">
                         <input type="hidden" name="company_id" value="30003">
                         <input type="hidden" name="company_name" value="Capgemini">
                         <input type="hidden" name="role" value="Engineer Trainee">
                         <button class="apply-btn">APPLY</button>
                     </form>
+                    <% } else { %>
+                    <button class="apply-btn-disabled" disabled title="Complete your profile first">APPLY</button>
+                    <% } %>
                 </td>
             </tr>
 
@@ -189,12 +275,16 @@ th{
                 <td>Java Developer</td>
                 <td>30/03/2021</td>
                 <td>
+                    <% if (profileComplete) { %>
                     <form action="apply.jsp" method="post">
                         <input type="hidden" name="company_id" value="30004">
                         <input type="hidden" name="company_name" value="Knowledge Lens">
                         <input type="hidden" name="role" value="Java Developer">
                         <button class="apply-btn">APPLY</button>
                     </form>
+                    <% } else { %>
+                    <button class="apply-btn-disabled" disabled title="Complete your profile first">APPLY</button>
+                    <% } %>
                 </td>
             </tr>
 
@@ -205,12 +295,16 @@ th{
                 <td>Java Developer</td>
                 <td>20/03/2021</td>
                 <td>
+                    <% if (profileComplete) { %>
                     <form action="apply.jsp" method="post">
                         <input type="hidden" name="company_id" value="30005">
                         <input type="hidden" name="company_name" value="Persistent Pune">
                         <input type="hidden" name="role" value="Java Developer">
                         <button class="apply-btn">APPLY</button>
                     </form>
+                    <% } else { %>
+                    <button class="apply-btn-disabled" disabled title="Complete your profile first">APPLY</button>
+                    <% } %>
                 </td>
             </tr>
 

@@ -123,6 +123,7 @@ body { margin:0; font-family: Arial, Helvetica, sans-serif; background:#f4f6f8; 
     <div class="topbar">
         <div class="menu"></div>
         <div class="title">STUDENT HOME</div>
+        <div style="font-size:15px; font-weight:bold;">👤 <%= firstName %></div>
     </div>
 
     <!-- Page Content -->
