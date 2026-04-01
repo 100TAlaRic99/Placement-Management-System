@@ -11,6 +11,13 @@
 
 <%
 String studentId = request.getParameter("id"); // hidden field from myprofile.jsp
+
+// Guard: if no studentId, redirect to login
+if(studentId == null || studentId.trim().isEmpty() || studentId.equals("null")){
+    response.sendRedirect("studentlogin.jsp");
+    return;
+}
+
 String fname   = request.getParameter("fname");
 String mname   = request.getParameter("mname");
 String lname   = request.getParameter("lname");
@@ -40,7 +47,6 @@ if(filePart != null && filePart.getSize() > 0){
 
 try {
     Class.forName("com.mysql.cj.jdbc.Driver");
-  Class.forName("com.mysql.cj.jdbc.Driver");
 
 // ENV variables (Railway)
 String host = System.getenv("DB_HOST");
@@ -64,7 +70,7 @@ if(host == null){
 Connection con = DriverManager.getConnection(url, user, pass);
     // 1. Check if record exists
     PreparedStatement check = con.prepareStatement("SELECT * FROM student_profile WHERE id=?");
-    check.setString(1, studentId);
+    check.setInt(1, Integer.parseInt(studentId));
     ResultSet rs = check.executeQuery();
 
     if(rs.next()){
@@ -87,7 +93,7 @@ Connection con = DriverManager.getConnection(url, user, pass);
         ps.setString(13, phone);
         ps.setString(14, skills);
         ps.setString(15, resumePath!=null?resumePath:rs.getString("resume_path"));
-        ps.setString(16, studentId);
+        ps.setInt(16, Integer.parseInt(studentId));
         ps.executeUpdate();
         ps.close();
     } else {
@@ -95,7 +101,7 @@ Connection con = DriverManager.getConnection(url, user, pass);
         PreparedStatement ps = con.prepareStatement(
             "INSERT INTO student_profile(id, fname, mname, lname, email, gender, address, marks10, marks12, diploma, graduation, branch, dob, phone, skills, resume_path) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
         );
-        ps.setString(1, studentId);
+        ps.setInt(1, Integer.parseInt(studentId));
         ps.setString(2, fname);
         ps.setString(3, mname);
         ps.setString(4, lname);

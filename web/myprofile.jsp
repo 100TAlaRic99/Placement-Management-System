@@ -210,7 +210,7 @@ if(studentId != null){
         <h2>My Profile</h2>
 
         <!-- Updated form: enctype added for file upload -->
-        <form action="SaveProfileServlet" method="post" enctype="multipart/form-data">
+        <form action="saveProfile.jsp" method="post" enctype="multipart/form-data">
           <input type="hidden" name="id" value="<%= studentId %>">
 
             <div class="form-row">
